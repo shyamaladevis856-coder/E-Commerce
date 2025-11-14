@@ -1,0 +1,399 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PureShop — E‑Commerce Demo</title>
+  <style>
+    :root{--accent:#ff6f61;--muted:#6b7280;--bg:#f7f8fb;--card:#ffffff}
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Arial;background:var(--bg);margin:0;color:#111}
+    header{background:linear-gradient(90deg,#fff 0%,#fff0 100%);padding:16px 24px;position:sticky;top:0;z-index:50;border-bottom:1px solid #e6e9ef}
+    .container{max-width:1100px;margin:0 auto;padding:18px}
+    .nav{display:flex;gap:18px;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+    .brand .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ffb199);display:grid;place-items:center;color:#fff}
+    nav ul{display:flex;gap:12px;list-style:none;padding:0;margin:0}
+    nav a{padding:8px 12px;border-radius:8px;text-decoration:none;color:var(--muted)}
+    nav a:hover{background:#fff;color:#000;border:1px solid #eee}
+    .actions{display:flex;gap:8px;align-items:center}
+    button.btn{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:0;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid #ddd;padding:8px 12px;border-radius:8px}/* layout */
+main{padding:24px}
+.grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
+.card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+
+/* product list */
+.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.product{padding:12px;border-radius:12px;border:1px solid #f0f0f3;display:flex;flex-direction:column;gap:8px}
+.product img{width:100%;height:140px;object-fit:cover;border-radius:8px}
+.meta{display:flex;justify-content:space-between;align-items:center}
+.price{font-weight:700;color:var(--accent)}
+
+/* sections in sidebar */
+.sidebar h3{margin:0 0 8px 0}
+.list{display:flex;flex-direction:column;gap:8px}
+.list .item{display:flex;justify-content:space-between;padding:10px;border-radius:8px;background:#fbfbfd}
+
+/* forms */
+form{display:flex;flex-direction:column;gap:10px}
+label{font-size:13px;color:var(--muted)}
+input,textarea,select{padding:10px;border-radius:8px;border:1px solid #e6e9ef}
+.small{font-size:13px;color:var(--muted)}
+
+/* modal */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.4);z-index:80}
+.modal.open{display:flex}
+.modal .panel{width:420px;max-width:95%;background:white;padding:18px;border-radius:12px}
+
+footer{padding:18px;text-align:center;color:var(--muted)}
+
+@media (max-width:880px){.grid{grid-template-columns:1fr}.sidebar{order:2}.products img{height:120px}}
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">PG</div>
+        <div>
+          <div>PureShop</div>
+          <div style="font-size:12px;color:var(--muted)">Creative e‑commerce demo</div>
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#home" data-nav>Home</a></li>
+          <li><a href="#products" data-nav>Product items</a></li>
+          <li><a href="#contact" data-nav>Contact Us</a></li>
+          <li><a href="#about" data-nav>About Us</a></li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <button class="ghost" id="openWishlist">Wishlist (<span id="wishCount">0</span>)</button>
+        <button class="ghost" id="openOrders">Orders (<span id="orderCount">0</span>)</button>
+        <button class="btn" id="btnLogin">Login / Register</button>
+      </div>
+    </div>
+  </header>  <main class="container">
+    <section id="home" class="card">
+      <h2>Welcome to PureShop</h2>
+      <p class="small">This single-file demo includes navigation, registration & login validation, sample products, wishlist, orders, reviews, customer care and reporting UI. Everything runs in the browser using local data — perfect for learning or prototype.</p>
+    </section><div class="grid" style="margin-top:16px">
+  <section>
+    <div id="products" class="card">
+      <h3>Featured Products</h3>
+      <div class="products" id="productList">
+        <!-- JS will render products here -->
+      </div>
+    </div>
+
+    <div id="reviews" class="card" style="margin-top:14px">
+      <h3>Comments & Reviews</h3>
+      <div id="reviewList" class="list" style="margin-top:8px"></div>
+      <form id="reviewForm" style="margin-top:12px">
+        <label for="revName">Your name</label>
+        <input id="revName" required />
+        <label for="revText">Review</label>
+        <textarea id="revText" rows="3" required></textarea>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label for="revRating" class="small">Rating</label>
+          <select id="revRating">
+            <option value="5">5 — Excellent</option>
+            <option value="4">4 — Good</option>
+            <option value="3">3 — Okay</option>
+            <option value="2">2 — Poor</option>
+            <option value="1">1 — Terrible</option>
+          </select>
+          <button class="btn" type="submit" style="margin-left:auto">Submit Review</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="reporting" class="card" style="margin-top:14px">
+      <h3>Reporting / Insights</h3>
+      <p class="small">Quick summary of user actions (client-only):</p>
+      <div class="list" style="margin-top:8px">
+        <div class="item"><span>Products viewed</span><strong id="statViews">0</strong></div>
+        <div class="item"><span>Wishlist items</span><strong id="statWish">0</strong></div>
+        <div class="item"><span>Orders placed</span><strong id="statOrders">0</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="sidebar">
+    <div class="card">
+      <h3>Customer Care</h3>
+      <p class="small">Chat/email/phone options (demo).</p>
+      <div class="list" style="margin-top:8px">
+        <div class="item"><span>Live Chat</span><button class="ghost" id="openChat">Open</button></div>
+        <div class="item"><span>Email</span><a href="mailto:support@pureshop.example">support@pureshop.example</a></div>
+        <div class="item"><span>Phone</span><a href="tel:+911234567890">+91 12345 67890</a></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h3>Orders List</h3>
+      <div id="ordersList" class="list" style="margin-top:8px"></div>
+      <button class="ghost" id="clearOrders" style="margin-top:8px">Clear demo orders</button>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h3>Wishlist</h3>
+      <div id="wishlistList" class="list" style="margin-top:8px"></div>
+      <button class="ghost" id="clearWishlist" style="margin-top:8px">Clear wishlist</button>
+    </div>
+  </aside>
+</div>
+
+<section id="contact" class="card" style="margin-top:18px">
+  <h3>Contact Us</h3>
+  <form id="contactForm">
+    <label>Name</label>
+    <input id="contactName" required />
+    <label>Email</label>
+    <input id="contactEmail" type="email" required />
+    <label>Message</label>
+    <textarea id="contactMessage" rows="4" required></textarea>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn" type="submit">Send Message</button>
+      <div class="small">We'll respond within 24-48 hours (demo)</div>
+    </div>
+  </form>
+</section>
+
+<section id="about" class="card" style="margin-top:14px">
+  <h3>About Us</h3>
+  <p>PureShop is a demo e‑commerce portal built to showcase front-end functionality: navigation, form validation, user interactions like wishlist/orders, customer care UI, comments and simple reporting. No server required — data is stored in browser localStorage for the demo.</p>
+</section>
+
+  </main>  <footer>
+    © PureShop demo — built for UI/UX & frontend testing
+  </footer>  <!-- Modal for Login/Register & Chat -->  <div id="modal" class="modal" aria-hidden="true">
+    <div class="panel" role="dialog" aria-modal="true">
+      <div id="modalContent"></div>
+    </div>
+  </div>  <script>
+    /* ===== Sample data & state (client-side demo) ===== */
+    const PRODUCTS = [
+      {id:1,name:'Glow Face Serum',price:499,img:'https://images.unsplash.com/photo-1600180758890-9b6b7c7f4f87?auto=format&fit=crop&w=800&q=60'},
+      {id:2,name:'Herbal Moisturizer',price:799,img:'https://images.unsplash.com/photo-1587668177822-8c0b2f8b0f06?auto=format&fit=crop&w=800&q=60'},
+      {id:3,name:'Satin Night Cream',price:699,img:'https://images.unsplash.com/photo-1556228720-6ec6ac7f3d7e?auto=format&fit=crop&w=800&q=60'},
+      {id:4,name:'Natural Lip Balm',price:149,img:'https://images.unsplash.com/photo-1582550936049-0c4a5e7f3f09?auto=format&fit=crop&w=800&q=60'}
+    ];
+
+    const state = {
+      products: PRODUCTS,
+      wishlist: JSON.parse(localStorage.getItem('demo_wishlist')||'[]'),
+      orders: JSON.parse(localStorage.getItem('demo_orders')||'[]'),
+      reviews: JSON.parse(localStorage.getItem('demo_reviews')||'[]'),
+      stats: JSON.parse(localStorage.getItem('demo_stats')||'{"views":0}')
+    };
+
+    /* ===== Utilities ===== */
+    function $(s){return document.querySelector(s)}
+    function $all(s){return document.querySelectorAll(s)}
+
+    /* ===== Renderers ===== */
+    function renderProducts(){
+      const container = $('#productList'); container.innerHTML='';
+      state.products.forEach(p=>{
+        const el = document.createElement('div'); el.className='product';
+        el.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" loading="lazy">
+          <div style="flex:1"><strong>${p.name}</strong><div class="small">Best seller</div></div>
+          <div class="meta">
+            <div class="price">₹${p.price}</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="ghost" data-action="wish" data-id="${p.id}">Add to Wishlist</button>
+            <button class="btn" data-action="buy" data-id="${p.id}">Buy Now</button>
+          </div>
+        `;
+        // attach handlers
+        el.querySelector('[data-action="wish"]').addEventListener('click',()=>toggleWishlist(p.id));
+        el.querySelector('[data-action="buy"]').addEventListener('click',()=>placeOrder(p.id));
+        el.addEventListener('click',()=>{
+          // increment view stat
+          state.stats.views = (state.stats.views||0)+1; save(); updateStats();
+        });
+        container.appendChild(el);
+      });
+    }
+
+    function renderWishlist(){
+      $('#wishlistList').innerHTML='';
+      state.wishlist.forEach(id=>{
+        const p = state.products.find(x=>x.id==id);
+        if(!p) return;
+        const div = document.createElement('div'); div.className='item';
+        div.innerHTML = <span>${p.name}</span><div><button class="ghost" data-id="${p.id}">Remove</button></div>;
+        div.querySelector('button').addEventListener('click',()=>{ removeFromWishlist(p.id); });
+        $('#wishlistList').appendChild(div);
+      });
+      $('#wishCount').textContent = state.wishlist.length;
+      $('#statWish').textContent = state.wishlist.length;
+    }
+
+    function renderOrders(){
+      $('#ordersList').innerHTML='';
+      state.orders.forEach((o,idx)=>{
+        const div = document.createElement('div'); div.className='item';
+        const p = state.products.find(x=>x.id==o.productId);
+        div.innerHTML = <span>Order #${o.id} — ${p?p.name:'(product removed)'} </span><strong>₹${p?p.price:o.price}</strong>;
+        $('#ordersList').appendChild(div);
+      });
+      $('#orderCount').textContent = state.orders.length;
+      $('#statOrders').textContent = state.orders.length;
+    }
+
+    function renderReviews(){
+      $('#reviewList').innerHTML='';
+      state.reviews.slice().reverse().forEach(r=>{
+        const div = document.createElement('div'); div.className='item';
+        div.innerHTML = <div><strong>${escapeHtml(r.name)}</strong> <span class="small">(${r.rating}/5)</span><div class="small">${escapeHtml(r.text)}</div></div>;
+        $('#reviewList').appendChild(div);
+      });
+    }
+
+    function updateStats(){
+      $('#statViews').textContent = state.stats.views||0;
+      $('#statWish').textContent = state.wishlist.length;
+      $('#statOrders').textContent = state.orders.length;
+      $('#wishCount').textContent = state.wishlist.length;
+      $('#orderCount').textContent = state.orders.length;
+    }
+
+    /* ===== Actions ===== */
+    function toggleWishlist(id){
+      if(state.wishlist.includes(id)) removeFromWishlist(id); else addToWishlist(id);
+    }
+    function addToWishlist(id){ state.wishlist.push(id); save(); renderWishlist(); showToast('Added to wishlist'); }
+    function removeFromWishlist(id){ state.wishlist = state.wishlist.filter(x=>x!==id); save(); renderWishlist(); showToast('Removed from wishlist'); }
+    function placeOrder(id){
+      const p = state.products.find(x=>x.id==id); if(!p) return;
+      const order = {id: 'ORD'+Date.now(), productId:id, price:p.price, date:new Date().toISOString()};
+      state.orders.push(order); save(); renderOrders(); showToast('Order placed — demo');
+    }
+
+    /* ===== Simple persistence ===== */
+    function save(){
+      localStorage.setItem('demo_wishlist',JSON.stringify(state.wishlist));
+      localStorage.setItem('demo_orders',JSON.stringify(state.orders));
+      localStorage.setItem('demo_reviews',JSON.stringify(state.reviews));
+      localStorage.setItem('demo_stats',JSON.stringify(state.stats));
+    }
+
+    /* ===== Reviews ===== */
+    $('#reviewForm').addEventListener('submit',e=>{
+      e.preventDefault();
+      const name = $('#revName').value.trim(), text = $('#revText').value.trim(), rating = parseInt($('#revRating').value);
+      if(!name || !text) return; state.reviews.push({name,text,rating,date:new Date().toISOString()}); save(); renderReviews(); $('#revName').value=''; $('#revText').value=''; showToast('Thanks for the review!');
+    });
+
+    /* ===== Contact form (validation) ===== */
+    $('#contactForm').addEventListener('submit',e=>{
+      e.preventDefault();
+      const email = $('#contactEmail').value.trim();
+      if(!validateEmail(email)){ alert('Please provide a valid email address.'); return; }
+      showToast('Message sent (demo)'); $('#contactForm').reset();
+    });
+
+    /* ===== Basic toast ===== */
+    function showToast(msg){
+      const t = document.createElement('div'); t.textContent=msg; t.style.position='fixed'; t.style.right='18px'; t.style.bottom='18px'; t.style.padding='10px 14px'; t.style.background='#111'; t.style.color='white'; t.style.borderRadius='8px'; t.style.zIndex=999; t.style.opacity='0'; t.style.transition='opacity .2s'; document.body.appendChild(t);
+      requestAnimationFrame(()=>t.style.opacity='1'); setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),400); },2200);
+    }
+
+    /* ===== Login / Registration with validation ===== */
+    function openAuth(){
+      const html = `
+        <h2 style="margin-top:0">Login or Register</h2>
+        <div style="display:flex;gap:8px">
+          <button id="showLogin" class="ghost">Login</button>
+          <button id="showRegister" class="ghost">Register</button>
+        </div>
+        <div id="authForms" style="margin-top:12px"></div>
+      `;
+      $('#modalContent').innerHTML = html; openModal();
+      $('#showLogin').addEventListener('click',()=>renderLogin());
+      $('#showRegister').addEventListener('click',()=>renderRegister());
+      renderLogin();
+    }
+
+    function renderLogin(){
+      $('#authForms').innerHTML = `
+        <form id="loginForm">
+          <label>Email</label><input id="loginEmail" type="email" required />
+          <label>Password</label><input id="loginPassword" type="password" required />
+          <div style="display:flex;gap:8px;align-items:center"><button class="btn">Login</button><div class="small">Demo: any registered user will be accepted</div></div>
+        </form>
+      `;
+      $('#loginForm').addEventListener('submit',e=>{
+        e.preventDefault();
+        const email = $('#loginEmail').value.trim();
+        if(!validateEmail(email)){ alert('Please enter a valid email.'); return; }
+        closeModal(); showToast('Login successful (demo)');
+      });
+    }
+
+    function renderRegister(){
+      $('#authForms').innerHTML = `
+        <form id="regForm">
+          <label>Full name</label><input id="regName" required />
+          <label>Email</label><input id="regEmail" type="email" required />
+          <label>Password</label><input id="regPassword" type="password" required minlength="6" />
+          <label>Confirm password</label><input id="regPassword2" type="password" required minlength="6" />
+          <div class="small">Password must be at least 6 characters and include a number.</div>
+          <div style="display:flex;gap:8px;align-items:center"><button class="btn">Register</button></div>
+        </form>
+      `;
+      $('#regForm').addEventListener('submit',e=>{
+        e.preventDefault();
+        const name = $('#regName').value.trim();
+        const email = $('#regEmail').value.trim();
+        const pw = $('#regPassword').value;
+        const pw2 = $('#regPassword2').value;
+        if(!name){alert('Please enter name');return}
+        if(!validateEmail(email)){alert('Invalid email');return}
+        if(pw.length<6 || !/\d/.test(pw)){alert('Password must be at least 6 chars and contain a number.');return}
+        if(pw!==pw2){alert('Passwords do not match');return}
+        // demo store user in localStorage (not secure) — for demo only
+        const users = JSON.parse(localStorage.getItem('demo_users')||'[]');
+        if(users.find(u=>u.email===email)){alert('User already exists');return}
+        users.push({name,email,password:btoa(pw)}); // btoa is not secure
+        localStorage.setItem('demo_users',JSON.stringify(users));
+        closeModal(); showToast('Registration successful (demo)');
+      });
+    }
+
+    /* ===== Modal helpers ===== */
+    function openModal(){ document.getElementById('modal').classList.add('open'); document.getElementById('modal').setAttribute('aria-hidden','false'); }
+    function closeModal(){ document.getElementById('modal').classList.remove('open'); document.getElementById('modal').setAttribute('aria-hidden','true'); }
+    document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal(); });
+
+    /* ===== Simple validation helpers ===== */
+    function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    function escapeHtml(str){ return String(str).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+
+    /* ===== Event wiring ===== */
+    $('#btnLogin').addEventListener('click',openAuth);
+    $('#openWishlist').addEventListener('click',()=>{ document.location.hash='wishlist'; showToast('Wishlist opened'); });
+    $('#openOrders').addEventListener('click',()=>{ document.location.hash='orders'; showToast('Orders opened'); });
+    $('#clearWishlist').addEventListener('click',()=>{ state.wishlist=[]; save(); renderWishlist(); });
+    $('#clearOrders').addEventListener('click',()=>{ state.orders=[]; save(); renderOrders(); });
+    $('#openChat').addEventListener('click',()=>{ openModal(); $('#modalContent').innerHTML = '<h3>Live Chat (demo)</h3><p class="small">This is a demo chat. For real apps integrate a chat provider.</p><button class="btn" onclick="closeModal()">Close</button>'; });
+
+    // contact form handler already attached
+
+    /* ===== Review initial rendering ===== */
+    function init(){ renderProducts(); renderWishlist(); renderOrders(); renderReviews(); updateStats(); }
+
+    init();
+
+    // Hash navigation handlers
+    window.addEventListener('hashchange',()=>{
+      const h = location.hash.replace('#','');
+      if(h==='wishlist') { document.querySelector('main').scrollIntoView({behavior:'smooth'}); showToast('Scroll to wishlist (d
